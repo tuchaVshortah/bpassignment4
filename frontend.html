@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fixed Staking Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.6/web3.min.js"></script>
+</head>
+<body>
+    <h1>Fixed Staking DApp</h1>
+    
+    <p>Connected Account: <span id="account"></span></p>
+    
+    <h2>Contract Address</h2>
+    <input type="text" id="contractAddr" placeholder="Enter the address" />
+    <button onclick="setContractAddr()">Set</button>
+    
+    <h2>Contract ABI</h2>
+    <input type="text" id="contractAbi" placeholder="Enter the ABI" />
+    <button onclick="setContractAbi()">Set</button>
+    
+    <h2>Stake Tokens</h2>
+    <input type="number" id="stakeAmount" placeholder="Enter the amount to stake" />
+    <button onclick="stakeTokens()">Stake</button>
+    
+    <h2>Unstake Tokens</h2>
+    <input type="number" id="unstakeAmount" placeholder="Enter the amount to unstake" />
+    <button onclick="unstakeTokens()">Unstake</button>
+    
+    <h2>Claim Rewards</h2>
+    <button onclick="claimRewards()">Claim</button>
+    
+    <h2>Balance and Staked Amount</h2>
+    <p>Your Balance: <span id="balance"></span> FIX</p>
+    <p>Staked Amount: <span id="stakedAmount"></span> FIX</p>
+    
+    <script>
+        var web3 = require('web3');
+        var Contract = require('web3-eth-contract');
+        
+        window.addEventListener('load', async () => {
+            if (window.ethereum) {
+              try {
+                const accounts = await window.ethereum.request({
+                  method: "eth_requestAccounts",
+                });
+                
+                const accounts = await web3.eth.getAccounts();
+                if (accounts.length > 0) {
+                    document.getElementById('account').textContent = accounts[0];
+                } else {
+                    document.getElementById('account').textContent = "Not connected";
+                }
+              } catch (err) {
+                alert(err.message);
+              }
+            } else {
+                alert("Please install MetaMask or another Ethereum browser extension.");
+            }
+        });
+        
+        function setContractAddr() {
+            const addr = document.getElementById('contractAddr').value;
+        }
+        
+        function setContractAbi() {
+            const abi = document.getElementById('contractAbi').value;
+        }
+
+        async function stakeTokens() {
+            const amount = document.getElementById('stakeAmount').value;
+            if (amount > 0) {
+                const contract = new web3.eth.Contract(
+                    document.getElementById('contractAbi').value,
+                    document.getElementById('contractAddr').value
+                );
+                await contract.methods.stake(amount).send({ from: web3.eth.defaultAccount });
+                refreshData();
+            }
+        }
+
+        async function unstakeTokens() {
+            const amount = document.getElementById('unstakeAmount').value;
+            if (amount > 0) {
+                const contract = new web3.eth.Contract(
+                    document.getElementById('contractAbi').value,
+                    document.getElementById('contractAddr').value
+                );
+                await contract.methods.unstake(amount).send({ from: web3.eth.defaultAccount });
+                refreshData();
+            }
+        }
+
+        async function claimRewards() {
+            const contract = new web3.eth.Contract(
+                document.getElementById('contractAbi').value,
+                document.getElementById('contractAddr').value
+            );
+            await contract.methods.claim().send({ from: web3.eth.defaultAccount });
+            refreshData();
+        }
+
+        async function refreshData() {
+            const contract = new web3.eth.Contract(
+                document.getElementById('contractAbi').value,
+                document.getElementById('contractAddr').value
+            );
+
+            const balance = await contract.methods.balanceOf(web3.eth.defaultAccount).call();
+            const stakedAmount = await contract.methods.staked(web3.eth.defaultAccount).call();
+
+            document.getElementById('balance').textContent = balance;
+            document.getElementById('stakedAmount').textContent = stakedAmount;
+        }
+    </script>
+</body>
+</html>
+
