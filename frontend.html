@@ -33,7 +33,8 @@
     <p>Staked Amount: <span id="stakedAmount"></span> FIX</p>
     
     <script>
-        var web3 = require('web3');
+        ethereum = window.ethereum;
+        web3 = new Web3(ethereum);
         
         window.onload = (event) => {
             if (window.ethereum) {
