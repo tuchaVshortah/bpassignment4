@@ -39,13 +39,10 @@
         window.addEventListener('load', async () => {
             if (window.ethereum) {
               try {
-                const accounts = await window.ethereum.request({
-                  method: "eth_requestAccounts",
-                });
-                
-                const accounts = await web3.eth.getAccounts();
+                const account = web3.eth.defaultAccount;
+                console.log(account);
                 if (accounts.length > 0) {
-                    document.getElementById('account').textContent = accounts[0];
+                    document.getElementById('account').textContent = account;
                 } else {
                     document.getElementById('account').textContent = "Not connected";
                 }
