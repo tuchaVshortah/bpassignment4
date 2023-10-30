@@ -34,9 +34,8 @@
     
     <script>
         var web3 = require('web3');
-        var Contract = require('web3-eth-contract');
         
-        window.addEventListener('load', async () => {
+        window.onload = (event) => {
             if (window.ethereum) {
               try {
                 const account = web3.eth.defaultAccount;
@@ -52,7 +51,7 @@
             } else {
                 alert("Please install MetaMask or another Ethereum browser extension.");
             }
-        });
+        };
         
         function setContractAddr() {
             const addr = document.getElementById('contractAddr').value;
