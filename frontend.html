@@ -41,7 +41,7 @@
               try {
                 const account = web3.eth.defaultAccount;
                 console.log(account);
-                if (accounts.length > 0) {
+                if (typeof account !== 'undefined') {
                     document.getElementById('account').textContent = account;
                 } else {
                     document.getElementById('account').textContent = "Not connected";
